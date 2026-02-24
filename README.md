@@ -19,10 +19,13 @@ This time I used JC64dis disassembler. The other tools I used were the stand alo
 Firstly I created a project in JC64dis and loaded the game I wanted to disassemble, Pitfall.
 
 The first thing to note in the assembly code in Pitfall is the information on what type of cartridge and where it starts in memmory.
+
 <img width="512" height="392" alt="jc64img" src="https://github.com/user-attachments/assets/84f43563-5ab8-43f9-b314-2c046a1f06e5" />
 
 It can be seen that the address for this code is $8000, which is the usual area of memory that cartridges are loaded into. At $8000 there are two addresses: coldstart and warmstart followed by the text CBM80. The C64 checks for the CBM80 and then runs the address at $8000. So the first part of the assembly code.
+
 <img width="569" height="195" alt="disassm" src="https://github.com/user-attachments/assets/bfffddbe-2986-4ecc-ac57-765054176ce5" />
+
 Then in this case the code starts at $8009. I have identified areas that look like data. Usually there is a JMP or branch just before this and the data usually has multiple jam / noop codes and 00s or FFs.
 
 I next ran dasm to compile this with dasm pitfall.asm -o pitfall.bin -f3.
@@ -35,7 +38,9 @@ I could then compare the starting values of each line to see where the differenc
 eg
 LDA.w $0006 
 or
+
 <img width="181" height="115" alt="disass2" src="https://github.com/user-attachments/assets/dcb619ce-000f-4c04-a228-aadaa9119736" />
+
 There turned out to be two of these commands that I needed to force to be 3 bytes (no zero byte commands).
 
 After running dasm and then cartconv again on the modified assembly code it compiled into a .crt pitfall.crt and worked correctly on VICE.
