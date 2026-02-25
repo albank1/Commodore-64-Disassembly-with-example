@@ -34,18 +34,19 @@ I ran cartconv -t normal -i pitfall.bin -o pitfall.crt. This came up with an err
 
 I used bin2byte.py to convert the pitfall.bin file. And also converted the original pitfall.crt to a bin file cartconv -i pitfall.crt -o pitfallorig.bin. Used bin2byte.py again to convert this file.
 
-I could then compare the starting values of each line to see where the difference occured. In conjunction I used the monitor on VICE (ALT+H) to disassemble this address to see what was occuring. It turns out that the issue is that some assembly commands have zero byte versions eg LDA $05 can either be compiled the same as LDA $0005 (ie 3 bytes) or 2 bytes. The orginal code used the 3 byte variant and dasm was more efficient and used the 2 byte variant. With dasm you can force it to use the 3 byte version with .w
+I could then compare the starting values of each line to see where the difference occured. In conjunction I used the monitor on VICE (ALT+H) to disassemble this address to see what was occuring. It turns out that the issue is that some assembly commands have zero byte versions eg LDA $05 can either be compiled with an absolute address (ie 3 bytes) or zero page address (2 bytes). The orginal code used the 3 byte absolute opcodes and dasm was more efficient and used the 2 byte zero page opcodes. With dasm you can force it to use the 3 byte version with .w
 eg
 LDA.w $0006 
 or
 
 <img width="181" height="115" alt="disass2" src="https://github.com/user-attachments/assets/dcb619ce-000f-4c04-a228-aadaa9119736" />
 
-There turned out to be two of these commands that I needed to force to be 3 bytes (no zero byte commands).
+There turned out to be two of these commands that I needed to force to be absolute opcodes (not 2 byte zero byte opcodes).
 
 After running dasm and then cartconv again on the modified assembly code it compiled into a .crt pitfall.crt and worked correctly on VICE.
 
-
+# Changing the number of lives or having infinite lives
+The next stage for me was to either increase the number of lives or have infinite lives. In Pitfall you have 3 lives (1 in play and 2 in reserve). I started to look for all instances of LDA #$03. In this case I could see 
 
 
 
