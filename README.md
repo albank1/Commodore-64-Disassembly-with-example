@@ -4,7 +4,7 @@ Disassembly of Pitfall concentrating on the process of disassembly Commodore 64 
 # Summary of process
 1) Use JC64dis to disassemble the .prg or .crt
 2) Mark the areas that are data as HEX, where this will include the first 9 bytes of a .crt
-3) I erase a lot of the automatic disassembly comments
+3) I like to erase a lot of the automatic disassembly comments as they are not that helpful
 4) Export this as a Dasm assembly format
 5) use dasm (dasm input.asm -o output.bin -f3) to compile and if not resolve issues
 6) use cartconv -t normal -i output.bin -o output.crt
@@ -46,7 +46,14 @@ There turned out to be two of these commands that I needed to force to be absolu
 After running dasm and then cartconv again on the modified assembly code it compiled into a .crt pitfall.crt and worked correctly on VICE.
 
 # Changing the number of lives or having infinite lives
-The next stage for me was to either increase the number of lives or have infinite lives. In Pitfall you have 3 lives (1 in play and 2 in reserve). I started to look for all instances of LDA #$03. In this case I could see 
+The next stage for me was to either increase the number of lives or have infinite lives. In Pitfall you have 3 lives (1 in play and 2 in reserve). I started to look for all instances of LDA #$03. In this case I could see a few addresses where this was present. I tested one of these by changing the number, recompiled and there seemed to be no change. I then looked through all the addresses that $03 was stored looked for them being decremented
 
+<img width="371" height="117" alt="image" src="https://github.com/user-attachments/assets/1ef43eec-ae44-4bcd-9960-c22e4713397b" />
+<img width="633" height="217" alt="image" src="https://github.com/user-attachments/assets/1b773b32-01c2-4acd-a021-6a7ee3af8110" />
 
+In this instance as it banches on not equal zero straight after the DEC I did not change to NOP and instead did LDA $07. This means the number of lives never reduces.
+
+Of the games I have disassembled the address where the number of lives is stored is not always as simple. eg for Matrix it has in the data (screen code) written to the screen. When you lost lives this value was reduced and compared with $30 (screen code for 0). Another example was Fogger where the number of lives on screen was 4 but I needed to hunt for where $05 was stored. After doing this I could find istances of LDA #$05 and find where this was stored.
+
+I have not disassembled enough games to fully explore the process but this should help you if you are interested in doing this yourself.
 
